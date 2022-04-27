@@ -1,6 +1,10 @@
 import json 
 import pandas as pd 
+# <<<<<<< HEAD
 from textblob import TextBlob
+# =======
+from textblob import textBlob 
+# >>>>>>> b5d6826ee0cf215654f29beec63e7f2bc4d0af11
 
 def read_json(json_file: str)->list:
     """
