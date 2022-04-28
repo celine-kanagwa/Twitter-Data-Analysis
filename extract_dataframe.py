@@ -1,10 +1,7 @@
 import json 
 import pandas as pd 
-# <<<<<<< HEAD
 from textblob import TextBlob
-# =======
-from textblob import textBlob 
-# >>>>>>> b5d6826ee0cf215654f29beec63e7f2bc4d0af11
+from bs4 import BeautifulSoup as bs
 
 def read_json(json_file: str)->list:
     """
@@ -57,14 +54,8 @@ class TweetDfExtractor:
         polarity = []
         subjectivity = []
         for data in self.tweets_list:
-            try:
-                polarity.append(data['polarity'])
-            except KeyError:
-                polarity.append(None)
-            try:
-                subjectivity.append(data['subjectivity'])
-            except KeyError:
-                subjectivity.append(None)
+            polarity.append(TextBlob(data['text']).sentiment.polarity)
+            subjectivity.append(TextBlob(data['text']).sentiment.subjectivity)
         return polarity, subjectivity
     
 
@@ -112,7 +103,7 @@ class TweetDfExtractor:
             try:
                 column.append(data['possibly_sensitive'])
             except KeyError:
-                    column.append(None)
+                    column.append(False)
         
         is_sensitive = column
         return is_sensitive
@@ -150,15 +141,18 @@ class TweetDfExtractor:
     def find_location(self)->list:
         column = []
         for data in self.tweets_list:
-            column.append(data['user']['location'])
+            try:
+                column.append(data["retweeted_status"]['user']['location'])
+            except KeyError:
+                column.append("")
         location = column
-            
+                
         return location
 
     def find_lang(self)->list:
         column = []
         for data in self.tweets_list:
-            column.append(data['user']['lang'])
+            column.append(data['lang'])
         lang = column
         return lang
     
